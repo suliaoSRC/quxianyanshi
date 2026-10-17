@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>运动衣物细菌与汗味程度的动态变化（案例一 · 案例二）</title>
+<title>运动衣物细菌与汗味程度的动态变化（案例一 · 案例二 · 对比）</title>
 <style>
 
   :root {
@@ -82,7 +82,7 @@
   .stage {
     position: relative;
     width: 100%;
-    height: clamp(340px, 48vw, 560px);
+    height: clamp(440px, 58vw, 720px);
     background: rgba(255, 255, 255, 0.45);
     border: 1px solid rgba(26, 37, 64, 0.10);
     border-radius: 14px;
@@ -94,7 +94,7 @@
   .chart-legend {
     position: absolute;
     top: clamp(10px, 2vw, 18px);
-    left: clamp(20px, 5vw, 70px);
+    left: clamp(110px, 13vw, 180px);
     display: flex; flex-direction: column; gap: 4px;
     pointer-events: none;
     font-size: clamp(10px, 1.2vw, 13px);
@@ -162,28 +162,14 @@
     background: rgba(255, 255, 255, 0.85);
     border: 1px solid rgba(26, 37, 64, 0.20);
   }
-  .progress {
-    width: 100%; height: 4px;
-    background: rgba(26, 37, 64, 0.08);
-    border-radius: 99px; overflow: hidden;
-    margin-top: 8px;
-  }
-  .progress > i {
-    display: block; height: 100%;
-    background: linear-gradient(90deg, #ff4d6d, #ff7ab8);
-    width: 0%;
-    transition: width 0.1s linear;
-  }
-
-  /* 平板竖屏 / 横屏进一步优化 */
   @media (max-width: 1180px) {
-    .wrap { padding: 12px 14px; }
+    #panel-case1 .wrap, #panel-case2 .wrap { padding: 12px 14px; }
   }
   @media (orientation: landscape) and (max-height: 820px) {
-    .stage { height: clamp(300px, 55vh, 460px); }
+    #panel-case1 .stage, #panel-case2 .stage { height: clamp(380px, 68vh, 600px); }
   }
   @media (orientation: portrait) and (min-width: 900px) {
-    .stage { height: clamp(420px, 52vh, 620px); }
+    #panel-case1 .stage, #panel-case2 .stage { height: clamp(500px, 62vh, 760px); }
   }
 
 
@@ -199,13 +185,14 @@
     border-radius: 99px;
     backdrop-filter: blur(10px);
     box-shadow: 0 6px 20px rgba(26, 37, 64, 0.08);
+    flex-wrap: wrap; justify-content: center;
   }
   .seg-btn {
     border: none; background: transparent;
     color: var(--ink-soft);
-    padding: clamp(7px, 1vw, 10px) clamp(16px, 2.2vw, 26px);
+    padding: clamp(7px, 1vw, 10px) clamp(14px, 2vw, 24px);
     border-radius: 99px; cursor: pointer;
-    font-size: clamp(12px, 1.4vw, 15px); font-weight: 700;
+    font-size: clamp(12px, 1.35vw, 15px); font-weight: 700;
     transition: all 0.25s; min-height: 40px;
     font-family: inherit; white-space: nowrap;
   }
@@ -218,10 +205,14 @@
     background: linear-gradient(135deg, #4f8cff, #2b6ae0); color: #fff;
     box-shadow: 0 4px 14px rgba(79, 140, 255, 0.35);
   }
+  .seg-btn.active[data-case="3"] {
+    background: linear-gradient(135deg, #ff4d6d, #4f8cff); color: #fff;
+    box-shadow: 0 4px 14px rgba(111, 92, 255, 0.30);
+  }
   .case-panel { display: none; }
   .case-panel.active { display: block; }
 
-  /* 案例二专属：播放按钮与进度条配色 */
+  /* 案例二专属：播放按钮配色 */
   button.case2-btn {
     background: linear-gradient(135deg, #4f8cff, #2b6ae0);
     border: none;
@@ -229,9 +220,20 @@
     box-shadow: 0 4px 14px rgba(79, 140, 255, 0.35);
   }
   button.case2-btn:hover { transform: translateY(-1px); }
-  #panel-case2 .progress > i {
-    background: linear-gradient(90deg, #4f8cff, #a566ff);
+
+  /* ===== 对比页专属 ===== */
+  #panel-vs .wrap { padding: clamp(8px, 1.8vw, 18px) clamp(10px, 2vw, 22px); }
+  #panel-vs .title {
+    text-align: center;
+    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 800;
+    color: var(--ink);
+    margin: 0 0 clamp(6px, 1vw, 10px);
+    letter-spacing: 0.5px;
   }
+  .case-title { font-size: clamp(13px, 1.4vw, 16px); font-weight: 800; fill: var(--ink); }
+  .case-desc  { font-size: clamp(10px, 1.05vw, 12.5px); fill: var(--ink-soft); font-weight: 600; }
+  #panel-vs .bottom { justify-content: center; gap: clamp(8px, 1.2vw, 16px); }
 
 </style>
 </head>
@@ -239,8 +241,9 @@
 
 <div class="page-head">
   <div class="seg" role="tablist">
-    <button class="seg-btn active" data-case="1" role="tab">案例一 · 旧衣日常快洗</button>
-    <button class="seg-btn" data-case="2" role="tab">案例二 · 标准洗＋除菌</button>
+    <button class="seg-btn active" data-case="1" role="tab">案例一 日常快洗・无除菌</button>
+    <button class="seg-btn" data-case="2" role="tab">案例二 日常除菌去味</button>
+    <button class="seg-btn" data-case="3" role="tab">案例一vs案例二</button>
   </div>
 </div>
 
@@ -250,7 +253,7 @@
   <header class="top">
     <div class="title-block">
       <h1>案例一：运动衣物细菌与汗味程度的动态变化</h1>
-      <p class="subtitle-1">使用3-4年，日常快洗：细菌虽然看不见，但你闻到的汗味，本质就是细菌的代谢产物。汗味是细菌的信号灯。去汗味更要除菌。</p>
+      <p class="subtitle-1">细菌虽然看不见，但你闻到的汗味，本质就是细菌的代谢产物。汗味是细菌的信号灯。去汗味更要除菌。</p>
     </div>
     <div class="stats">
       <div class="stat">
@@ -332,8 +335,6 @@
       </div>
     </div>
   </div>
-
-  <div class="progress"><i id="c1-bar1"></i></div>
 </div>
 </section>
 
@@ -343,7 +344,7 @@
   <header class="top">
     <div class="title-block">
       <h1>案例二：运动衣物细菌与汗味程度的动态变化</h1>
-      <p class="subtitle-1">使用1-2年，日常标准洗+除菌至尊：运动暴汗后仍无明显汗味，日常除菌去味很关键。暴汗后扔脏衣篓过夜，细菌和汗味爆发——暴汗后及时洗也关键。</p>
+      <p class="subtitle-1">日常除菌去味很关键，运动暴汗后仍无明显汗味。暴汗后扔脏衣篓过夜，细菌和汗味爆发——暴汗后及时洗也关键。</p>
     </div>
     <div class="stats">
       <div class="stat">
@@ -425,8 +426,87 @@
       </div>
     </div>
   </div>
+</div>
+</section>
 
-  <div class="progress"><i id="c2-bar1"></i></div>
+<section class="case-panel" id="panel-vs">
+<div class="wrap">
+  <h1 class="title">运动衣物细菌与汗味动态变化对比</h1>
+  <div class="stage">
+    <svg id="vs-chart" viewBox="0 0 2560 620" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="vs-areaGrad1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#ff4d6d" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#ff4d6d" stop-opacity="0.02"/>
+        </linearGradient>
+        <linearGradient id="vs-areaGrad2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#ff4d6d" stop-opacity="0.22"/>
+          <stop offset="100%" stop-color="#ff4d6d" stop-opacity="0.02"/>
+        </linearGradient>
+        <filter id="vs-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- 案例一 -->
+      <g id="vs-case1-group">
+        <text class="case-title" x="640" y="26" text-anchor="middle">案例一</text>
+        <text class="case-desc"  x="640" y="44" text-anchor="middle">日常无除菌去味，汗味严重，反复</text>
+        <g id="vs-grid1"></g>
+        <path id="vs-area1" fill="url(#vs-areaGrad1)" d=""/>
+        <path id="vs-line1-smell" fill="none" stroke="#3b82f6" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round"
+              stroke-dasharray="6 5" d=""/>
+        <g id="vs-dots1-smell"></g>
+        <path id="vs-line1-bac" fill="none" stroke="#ff4d6d" stroke-width="2.8"
+              stroke-linecap="round" stroke-linejoin="round" filter="url(#vs-glow)" d=""/>
+        <g id="vs-dots1-bac"></g>
+        <g id="vs-labels1-bac"></g>
+        <g id="vs-labels1-smell"></g>
+        <text x="20" y="30" font-size="11" fill="#ff4d6d" font-weight="700">菌含量 (CFU/25c㎡)</text>
+        <text x="1260" y="30" text-anchor="end" font-size="11" fill="#3b82f6" font-weight="700">异味评分 (0-5分)</text>
+      </g>
+
+      <!-- 分隔线 -->
+      <line x1="1280" y1="44" x2="1280" y2="580" stroke="rgba(26,37,64,0.15)" stroke-width="1" stroke-dasharray="4 4"/>
+
+      <!-- 案例二 -->
+      <g id="vs-case2-group" transform="translate(1280,0)">
+        <text class="case-title" x="640" y="26" text-anchor="middle">案例二</text>
+        <text class="case-desc"  x="640" y="44" text-anchor="middle">日常除菌去味，运动暴汗后仍无明显汗味</text>
+        <g id="vs-grid2"></g>
+        <path id="vs-area2" fill="url(#vs-areaGrad2)" d=""/>
+        <path id="vs-line2-smell" fill="none" stroke="#3b82f6" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round"
+              stroke-dasharray="6 5" d=""/>
+        <g id="vs-dots2-smell"></g>
+        <path id="vs-line2-bac" fill="none" stroke="#ff4d6d" stroke-width="2.8"
+              stroke-linecap="round" stroke-linejoin="round" filter="url(#vs-glow)" d=""/>
+        <g id="vs-dots2-bac"></g>
+        <g id="vs-labels2-bac"></g>
+        <g id="vs-labels2-smell"></g>
+        <text x="20" y="30" font-size="11" fill="#ff4d6d" font-weight="700">菌含量 (CFU/25c㎡)</text>
+        <text x="1260" y="30" text-anchor="end" font-size="11" fill="#3b82f6" font-weight="700">异味评分 (0-5分)</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="bottom">
+    <div class="controls">
+      <button id="vs-resetBtn" class="reset-btn">⟲ 重播</button>
+      <button id="vs-playBtn1" class="case1-btn">▶ 播放 案例一</button>
+      <button id="vs-playBtn2" class="case2-btn">▶ 播放 案例二</button>
+      <div class="speed">
+        速度
+        <input type="range" id="vs-speed" min="0.3" max="3" step="0.1" value="1" />
+        <span id="vs-speedVal">1.0×</span>
+      </div>
+    </div>
+  </div>
 </div>
 </section>
 
@@ -527,7 +607,6 @@ const nowVal1El    = document.getElementById('c1-nowVal1');
 const nowVal2El    = document.getElementById('c1-nowVal2');
 const nowTimeEl    = document.getElementById('c1-nowTime');
 const stage        = document.getElementById('c1-stage');
-const bar1         = document.getElementById('c1-bar1');
 
 function formatNum(v) {
   if (v >= 1000000) return (v/1000000).toFixed(1) + 'M';
@@ -765,7 +844,6 @@ function updateStats() {
   const nearestIdx = Math.round(idx1);
   const idxClamped = Math.max(0, Math.min(N - 1, nearestIdx));
   nowTimeEl.textContent = scenes[idxClamped].short;
-  bar1.style.width = (idx1 / totalSteps * 100).toFixed(1) + '%';
 }
 
 function draw() {
@@ -990,7 +1068,6 @@ const nowVal1El    = document.getElementById('c2-nowVal1');
 const nowVal2El    = document.getElementById('c2-nowVal2');
 const nowTimeEl    = document.getElementById('c2-nowTime');
 const stage        = document.getElementById('c2-stage');
-const bar1         = document.getElementById('c2-bar1');
 
 function formatNum(v) {
   if (v >= 1000000) return (v/1000000).toFixed(1) + 'M';
@@ -1222,7 +1299,6 @@ function updateStats() {
   const nearestIdx = Math.round(idx1);
   const idxClamped = Math.max(0, Math.min(N - 1, nearestIdx));
   nowTimeEl.textContent = scenes[idxClamped].short;
-  bar1.style.width = (idx1 / totalSteps * 100).toFixed(1) + '%';
 }
 
 function draw() {
@@ -1353,27 +1429,671 @@ draw();
 </script>
 
 <script>
+/* ================= 案例一 vs 案例二 ================= */
+(function () {
+
+/* =============================================================
+   通用布局与比例尺
+   ============================================================= */
+const CASE_W = 1280;
+const H = 620;
+const PAD_L = 90, PAD_R = 130;
+const PAD_T = 60, PAD_B = 80;
+const plotW = CASE_W - PAD_L - PAD_R;
+const plotH = H - PAD_T - PAD_B;
+const Y_MAX_SMELL = 5;
+
+/* ---------- 案例一数据 ---------- */
+const scenes1 = [
+  { label: "运动前\n换洗后衣服",     short: "运动前" },
+  { label: "运动中1h\n暴汗",         short: "运动中1h" },
+  { label: "运动结束2h\n衣物湿透",   short: "运动结束2h" },
+  { label: "浴室堆放\n1h",           short: "堆放1h" },
+  { label: "浴室堆放\n2h",           short: "堆放2h" },
+  { label: "浴室堆放\n3h",           short: "堆放3h" },
+  { label: "浴室堆放\n10h",          short: "堆放10h" }
+];
+const case1Bacteria = [
+  { idx: 0, v: 1650,   tip: "污渍累积多，\n细菌数起始值高" },
+  { idx: 1, v: 48000,  tip: "" },
+  { idx: 2, v: 70200,  tip: "" },
+  { idx: 3, v: 400000, tip: "细菌爆发增长" },
+  { idx: 4, v: 300000, tip: "大量细菌代谢物" },
+  { idx: 5, v: 320000, tip: "" },
+  { idx: 6, v: 176000, tip: "" }
+];
+const case1Smell = [
+  { idx: 0, score: 0, desc: "无异味",       tip: "" },
+  { idx: 1, score: 2, desc: "出现汗味",     tip: "" },
+  { idx: 2, score: 2, desc: "",             tip: "" },
+  { idx: 3, score: 2, desc: "",             tip: "" },
+  { idx: 4, score: 3, desc: "汗味酸臭加重", tip: "" },
+  { idx: 5, score: 4, desc: "",             tip: "" },
+  { idx: 6, score: 5, desc: "💥汗臭味特别严重", tip: "去汗味更要除菌" }
+];
+const Y_MAX_BAC_1 = 400000;
+const radiusBac1 = (v) => {
+  if (v >= 400000) return 30;
+  if (v >= 100000) return 28;
+  if (v >= 10000)  return 26;
+  return 20;
+};
+
+/* ---------- 案例二数据 ---------- */
+const scenes2 = [
+  { label: "运动前\n换洗后衣服",     short: "运动前" },
+  { label: "运动中1h\n暴汗",         short: "运动中1h" },
+  { label: "运动结束2h\n衣物湿透",   short: "运动结束2h" },
+  { label: "浴室堆放\n1h",           short: "堆放1h" },
+  { label: "浴室堆放\n2h",           short: "堆放2h" },
+  { label: "浴室堆放\n3h",           short: "堆放3h" },
+  { label: "浴室堆放\n4h",           short: "堆放4h" },
+  { label: "浴室堆放\n11h",          short: "堆放11h" }
+];
+const case2Bacteria = [
+  { idx: 0, v: 60,    tip: "" },
+  { idx: 1, v: 100,   tip: "" },
+  { idx: 2, v: 340,   tip: "⭐日常除菌是关键" },
+  { idx: 3, v: 110,   tip: "" },
+  { idx: 4, v: 235,   tip: "" },
+  { idx: 5, v: 115,   tip: "" },
+  { idx: 6, v: 315,   tip: "" },
+  { idx: 7, v: 6250,  tip: "细菌滋生\n及时洗涤很重要" }
+];
+const case2Smell = [
+  { idx: 0, score: 0, desc: "无异味",       tip: "" },
+  { idx: 1, score: 0, desc: "",             tip: "" },
+  { idx: 2, score: 0, desc: "无异味困扰",   tip: "" },
+  { idx: 3, score: 0, desc: "",             tip: "" },
+  { idx: 4, score: 1, desc: "轻微汗味",     tip: "" },
+  { idx: 5, score: 1, desc: "",             tip: "" },
+  { idx: 6, score: 2, desc: "",             tip: "" },
+  { idx: 7, score: 4, desc: "汗味酸臭",     tip: "" }
+];
+const Y_MAX_BAC_2 = 7000;
+const radiusBac2 = (v, idx) => {
+  if (idx === 7) return 22;
+  if (idx >= 1 && idx <= 6) return 17;
+  return Math.max(10, Math.min(36, Math.sqrt(v) * 0.75));
+};
+
+/* ---------- 颜色常量 ---------- */
+const bacteriaColor = "#ff4d6d";
+const smellColor = "#3b82f6";
+const tipGreen = "#16a34a";
+const FONT_BAC = 13;
+const FONT_SMELL = 13;
+
+/* =============================================================
+   通用函数
+   ============================================================= */
+function xAt(i, N) {
+  if (N === 1) return PAD_L + plotW / 2;
+  return PAD_L + (i / (N - 1)) * plotW;
+}
+function yAtBac(v, Y_MAX) {
+  const h = Math.max(0, Math.min(1.05, v / Y_MAX));
+  return PAD_T + plotH - h * plotH;
+}
+function yAtSmell(s) {
+  const h = Math.max(0, Math.min(1.05, s / Y_MAX_SMELL));
+  return PAD_T + plotH - h * plotH;
+}
+
+function buildSamples(points, valueKey) {
+  const samples = [];
+  for (let i = 0; i < points.length - 1; i++) {
+    const a = points[i], b = points[i+1];
+    const span = b.idx - a.idx;
+    const steps = Math.max(20, Math.floor(span * 30));
+    for (let k = 0; k < steps; k++) {
+      const u = k / steps;
+      const idx = a.idx + span * u;
+      const v = a[valueKey] + (b[valueKey] - a[valueKey]) * (1 - Math.cos(u * Math.PI)) / 2;
+      samples.push({ idx, v });
+    }
+  }
+  const last = points[points.length-1];
+  samples.push({ idx: last.idx, v: last[valueKey] });
+  return samples;
+}
+
+function formatNum(v) {
+  if (v >= 1000000) return (v/1000000).toFixed(1) + 'M';
+  if (v >= 1000) return (v/1000).toFixed(v>=10000?0:1) + 'k';
+  return Math.round(v).toString();
+}
+
+function drawGrid(el, scenes, Y_MAX_BAC, N) {
+  let html = '';
+  for (let i = 0; i < N; i++) {
+    const x = xAt(i, N);
+    html += `<line x1="${x}" y1="${PAD_T}" x2="${x}" y2="${PAD_T+plotH}" stroke="var(--grid)" stroke-width="1"/>`;
+    const lines = scenes[i].label.split('\n');
+    lines.forEach((ln, li) => {
+      html += `<text x="${x}" y="${PAD_T+plotH+20 + li*15}" text-anchor="middle" font-size="11" font-weight="700" fill="var(--label)">${ln}</text>`;
+    });
+  }
+  for (let i = 0; i <= 5; i++) {
+    const v = (Y_MAX_BAC / 5) * i;
+    const yy = PAD_T + plotH - (i / 5) * plotH;
+    html += `<line x1="${PAD_L}" y1="${yy}" x2="${PAD_L+plotW}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/>`;
+    html += `<text x="${PAD_L-10}" y="${yy+4}" text-anchor="end" font-size="11" fill="${bacteriaColor}" font-weight="700">${formatNum(v)}</text>`;
+  }
+  for (let i = 0; i <= 5; i++) {
+    const yy = PAD_T + plotH - (i / 5) * plotH;
+    html += `<text x="${PAD_L+plotW+10}" y="${yy+4}" text-anchor="start" font-size="11" fill="${smellColor}" font-weight="700">${i}</text>`;
+  }
+  html += `<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${PAD_T+plotH}" stroke="${bacteriaColor}" stroke-width="1.6"/>`;
+  html += `<line x1="${PAD_L+plotW}" y1="${PAD_T}" x2="${PAD_L+plotW}" y2="${PAD_T+plotH}" stroke="${smellColor}" stroke-width="1.6"/>`;
+  html += `<line x1="${PAD_L}" y1="${PAD_T+plotH}" x2="${PAD_L+plotW}" y2="${PAD_T+plotH}" stroke="var(--axis)" stroke-width="1.2"/>`;
+  el.innerHTML = html;
+}
+
+function buildDotsAndLabels(bacLayer, smellLayer, bacLabelLayer, smellLabelLayer, caseBacteria, caseSmell, Y_MAX_BAC, radiusBac) {
+  bacLayer.innerHTML = '';
+  smellLayer.innerHTML = '';
+  bacLabelLayer.innerHTML = '';
+  smellLabelLayer.innerHTML = '';
+
+  caseBacteria.forEach((e, i) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','dot bac');
+    g.setAttribute('data-idx', i);
+    g.setAttribute('opacity','0');
+    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    halo.setAttribute('r','18');
+    halo.setAttribute('fill', bacteriaColor);
+    halo.setAttribute('opacity','0.18');
+    g.appendChild(halo);
+    const r = radiusBac(e.v, e.idx);
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r', r.toFixed(2));
+    c.setAttribute('fill', bacteriaColor);
+    c.setAttribute('stroke','#fff');
+    c.setAttribute('stroke-width','1.5');
+    c.setAttribute('filter','url(#vs-glow)');
+    g.appendChild(c);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('fill','#fff');
+    txt.setAttribute('font-size', FONT_BAC + 'px');
+    txt.setAttribute('font-weight','800');
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('dy','5');
+    txt.textContent = formatNum(e.v);
+    g.appendChild(txt);
+    bacLayer.appendChild(g);
+
+    if (e.tip && e.tip.trim() !== "") {
+      const gl = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      gl.setAttribute('class', 'event-label bac');
+      gl.setAttribute('data-idx', i);
+      gl.setAttribute('opacity', '0');
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('rx', '10'); rect.setAttribute('ry', '10');
+      rect.setAttribute('fill', 'var(--pill-bg)');
+      rect.setAttribute('stroke', bacteriaColor);
+      rect.setAttribute('stroke-width', '1.6');
+      rect.setAttribute('filter', 'url(#vs-glow)');
+      gl.appendChild(rect);
+      const tag = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      tag.setAttribute('width','4'); tag.setAttribute('rx','2');
+      tag.setAttribute('fill', bacteriaColor);
+      gl.appendChild(tag);
+      const lines = e.tip.split('\n');
+      lines.forEach((ln) => {
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('fill', '#1a2540');
+        t.setAttribute('font-size', '11');
+        t.setAttribute('font-weight', '700');
+        t.textContent = ln;
+        gl.appendChild(t);
+      });
+      gl._lines = lines;
+      bacLabelLayer.appendChild(gl);
+    }
+  });
+
+  caseSmell.forEach((e, i) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','dot smell');
+    g.setAttribute('data-idx', i);
+    g.setAttribute('opacity','0');
+    const halo = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    halo.setAttribute('r','14');
+    halo.setAttribute('fill', smellColor);
+    halo.setAttribute('opacity','0.18');
+    g.appendChild(halo);
+    const r = Math.max(8, Math.min(22, Math.sqrt(e.score) * 7));
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('r', r.toFixed(2));
+    c.setAttribute('fill', smellColor);
+    c.setAttribute('stroke','#fff');
+    c.setAttribute('stroke-width','1.5');
+    if (e.score === 4) {
+      c.setAttribute('fill-opacity', '0.55');
+      c.setAttribute('stroke-opacity', '0.7');
+    }
+    c.setAttribute('filter','url(#vs-glow)');
+    g.appendChild(c);
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('fill','#fff');
+    txt.setAttribute('font-size', FONT_SMELL + 'px');
+    txt.setAttribute('font-weight','800');
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('dy','5');
+    txt.textContent = e.score;
+    if (e.score === 4) txt.setAttribute('fill-opacity', '0.85');
+    g.appendChild(txt);
+    smellLayer.appendChild(g);
+
+    const hasDesc = e.desc && e.desc.trim() !== "";
+    const hasTip = e.tip && e.tip.trim() !== "";
+    if (!hasDesc && !hasTip) return;
+
+    const gl = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    gl.setAttribute('class', 'event-label smell');
+    gl.setAttribute('data-idx', i);
+    gl.setAttribute('opacity', '0');
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('rx', '10'); rect.setAttribute('ry', '10');
+    rect.setAttribute('fill', 'var(--pill-bg)');
+    rect.setAttribute('stroke', smellColor);
+    rect.setAttribute('stroke-width', '1.6');
+    rect.setAttribute('filter', 'url(#vs-glow)');
+    gl.appendChild(rect);
+    const tag = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    tag.setAttribute('width','4'); tag.setAttribute('rx','2');
+    tag.setAttribute('fill', smellColor);
+    gl.appendChild(tag);
+
+    if (hasDesc) {
+      const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t1.setAttribute('fill', tipGreen);
+      t1.setAttribute('font-size', '11');
+      t1.setAttribute('font-weight', '800');
+      t1.textContent = e.desc;
+      gl.appendChild(t1);
+    }
+    if (hasTip) {
+      const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t2.setAttribute('fill', '#1a2540');
+      t2.setAttribute('font-size', '11');
+      t2.setAttribute('font-weight', '700');
+      t2.textContent = e.tip;
+      gl.appendChild(t2);
+    }
+    gl._hasDesc = hasDesc;
+    gl._hasTip = hasTip;
+    smellLabelLayer.appendChild(gl);
+  });
+}
+
+/* =============================================================
+   初始化
+   ============================================================= */
+const samples1Bac = buildSamples(case1Bacteria, 'v');
+const samples1Smell = buildSamples(case1Smell, 'score');
+const samples2Bac = buildSamples(case2Bacteria, 'v');
+const samples2Smell = buildSamples(case2Smell, 'score');
+
+const grid1 = document.getElementById('vs-grid1');
+const area1 = document.getElementById('vs-area1');
+const line1bac = document.getElementById('vs-line1-bac');
+const line1smell = document.getElementById('vs-line1-smell');
+const dots1bac = document.getElementById('vs-dots1-bac');
+const dots1smell = document.getElementById('vs-dots1-smell');
+const labels1bac = document.getElementById('vs-labels1-bac');
+const labels1smell = document.getElementById('vs-labels1-smell');
+
+const grid2 = document.getElementById('vs-grid2');
+const area2 = document.getElementById('vs-area2');
+const line2bac = document.getElementById('vs-line2-bac');
+const line2smell = document.getElementById('vs-line2-smell');
+const dots2bac = document.getElementById('vs-dots2-bac');
+const dots2smell = document.getElementById('vs-dots2-smell');
+const labels2bac = document.getElementById('vs-labels2-bac');
+const labels2smell = document.getElementById('vs-labels2-smell');
+
+drawGrid(grid1, scenes1, Y_MAX_BAC_1, scenes1.length);
+drawGrid(grid2, scenes2, Y_MAX_BAC_2, scenes2.length);
+buildDotsAndLabels(dots1bac, dots1smell, labels1bac, labels1smell, case1Bacteria, case1Smell, Y_MAX_BAC_1, radiusBac1);
+buildDotsAndLabels(dots2bac, dots2smell, labels2bac, labels2smell, case2Bacteria, case2Smell, Y_MAX_BAC_2, radiusBac2);
+
+/* =============================================================
+   动画与绘制
+   ============================================================= */
+let speed = 1;
+const FULL_DURATION = 18000;
+const speedInput = document.getElementById('vs-speed');
+const speedVal = document.getElementById('vs-speedVal');
+speedInput.addEventListener('input', e => {
+  speed = parseFloat(e.target.value);
+  speedVal.textContent = speed.toFixed(1) + '×';
+});
+
+let idx1 = 0, playing1 = false, animStart1 = null, rafId1 = null;
+const playBtn1 = document.getElementById('vs-playBtn1');
+playBtn1.addEventListener('click', () => { playing1 ? pauseCase1() : playCase1(); });
+
+function playCase1() {
+  const totalSteps = scenes1.length - 1;
+  if (idx1 >= totalSteps - 0.001) idx1 = 0;
+  playing1 = true;
+  playBtn1.textContent = '⏸ 暂停 案例一';
+  animStart1 = performance.now() - (idx1 / totalSteps) * (FULL_DURATION / speed);
+  rafId1 = requestAnimationFrame(tick1);
+}
+function pauseCase1() {
+  playing1 = false;
+  playBtn1.textContent = '▶ 播放 案例一';
+  if (rafId1) cancelAnimationFrame(rafId1);
+}
+function tick1(now) {
+  if (!playing1) return;
+  const totalSteps = scenes1.length - 1;
+  const elapsed = (now - animStart1) * speed;
+  idx1 = (elapsed / FULL_DURATION) * totalSteps;
+  if (idx1 >= totalSteps) { idx1 = totalSteps; drawCase1(); pauseCase1(); return; }
+  drawCase1();
+  rafId1 = requestAnimationFrame(tick1);
+}
+
+let idx2 = 0, playing2 = false, animStart2 = null, rafId2 = null;
+const playBtn2 = document.getElementById('vs-playBtn2');
+playBtn2.addEventListener('click', () => { playing2 ? pauseCase2() : playCase2(); });
+
+function playCase2() {
+  const totalSteps = scenes2.length - 1;
+  if (idx2 >= totalSteps - 0.001) idx2 = 0;
+  playing2 = true;
+  playBtn2.textContent = '⏸ 暂停 案例二';
+  animStart2 = performance.now() - (idx2 / totalSteps) * (FULL_DURATION / speed);
+  rafId2 = requestAnimationFrame(tick2);
+}
+function pauseCase2() {
+  playing2 = false;
+  playBtn2.textContent = '▶ 播放 案例二';
+  if (rafId2) cancelAnimationFrame(rafId2);
+}
+function tick2(now) {
+  if (!playing2) return;
+  const totalSteps = scenes2.length - 1;
+  const elapsed = (now - animStart2) * speed;
+  idx2 = (elapsed / FULL_DURATION) * totalSteps;
+  if (idx2 >= totalSteps) { idx2 = totalSteps; drawCase2(); pauseCase2(); return; }
+  drawCase2();
+  rafId2 = requestAnimationFrame(tick2);
+}
+
+const resetBtn = document.getElementById('vs-resetBtn');
+resetBtn.addEventListener('click', () => {
+  pauseCase1(); pauseCase2();
+  idx1 = 0; idx2 = 0;
+  drawCase1(); drawCase2();
+});
+
+/* ---------- 案例一绘制 ---------- */
+function drawCase1() {
+  const N = scenes1.length;
+  const visBac = samples1Bac.filter(s => s.idx <= idx1 + 0.01);
+  const visSmell = samples1Smell.filter(s => s.idx <= idx1 + 0.01);
+
+  if (visBac.length > 1) {
+    let d = '';
+    visBac.forEach((s, i) => {
+      const x = xAt(s.idx, N);
+      const y = yAtBac(s.v, Y_MAX_BAC_1);
+      d += (i === 0 ? `M${x.toFixed(2)} ${y.toFixed(2)}` : ` L${x.toFixed(2)} ${y.toFixed(2)}`);
+    });
+    line1bac.setAttribute('d', d);
+    const firstX = xAt(visBac[0].idx, N);
+    const lastX  = xAt(visBac[visBac.length-1].idx, N);
+    const baseY  = PAD_T + plotH;
+    area1.setAttribute('d', d + ` L${lastX.toFixed(2)} ${baseY} L${firstX.toFixed(2)} ${baseY} Z`);
+  } else { line1bac.setAttribute('d', ''); area1.setAttribute('d', ''); }
+
+  if (visSmell.length > 1) {
+    let d = '';
+    visSmell.forEach((s, i) => {
+      const x = xAt(s.idx, N);
+      const y = yAtSmell(s.v);
+      d += (i === 0 ? `M${x.toFixed(2)} ${y.toFixed(2)}` : ` L${x.toFixed(2)} ${y.toFixed(2)}`);
+    });
+    line1smell.setAttribute('d', d);
+  } else { line1smell.setAttribute('d', ''); }
+
+  const dotNodesBac = dots1bac.querySelectorAll('.dot.bac');
+  dotNodesBac.forEach((node, i) => {
+    const e = case1Bacteria[i];
+    if (e.idx <= idx1 + 0.5) {
+      node.setAttribute('opacity', '1');
+      node.setAttribute('transform', `translate(${xAt(e.idx, N).toFixed(2)}, ${yAtBac(e.v, Y_MAX_BAC_1).toFixed(2)})`);
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const dotNodesSmell = dots1smell.querySelectorAll('.dot.smell');
+  dotNodesSmell.forEach((node, i) => {
+    const e = case1Smell[i];
+    if (e.idx <= idx1 + 0.5) {
+      node.setAttribute('opacity', '1');
+      node.setAttribute('transform', `translate(${xAt(e.idx, N).toFixed(2)}, ${yAtSmell(e.score).toFixed(2)})`);
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const labelNodesBac = labels1bac.querySelectorAll('.event-label.bac');
+  labelNodesBac.forEach((node) => {
+    const i = parseInt(node.getAttribute('data-idx'), 10);
+    const e = case1Bacteria[i];
+    if (e.idx <= idx1 + 0.5) {
+      node.setAttribute('opacity', '1');
+      const x = xAt(e.idx, N);
+      const y = yAtBac(e.v, Y_MAX_BAC_1);
+      const lines = node._lines;
+      const texts = node.querySelectorAll('text');
+      let maxW = 0;
+      texts.forEach(t => { maxW = Math.max(maxW, t.getComputedTextLength?.() ?? 120); });
+      const w = maxW + 22;
+      const h = lines.length * 15 + 14;
+      let tx = x - w / 2;
+      let ty = y - h - 30;
+      if (e.idx === 0) { tx = x - w / 2; ty = y - h - 80; }
+      else if (e.idx === 3) { tx = x - w - 100; ty = yAtBac(300000, Y_MAX_BAC_1) - h / 2; }
+      else if (e.idx === 4) { tx = x - w / 2 + 80; ty = yAtSmell(5) + 30; }
+      tx = Math.max(PAD_L + 4, Math.min(PAD_L + plotW - w - 4, tx));
+      ty = Math.max(PAD_T + 4, ty);
+      node.setAttribute('transform', `translate(${tx.toFixed(2)}, ${ty.toFixed(2)})`);
+      const rect = node.querySelector('rect:first-child');
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', h);
+      node.querySelectorAll('rect')[1].setAttribute('height', h);
+      lines.forEach((ln, li) => {
+        texts[li].setAttribute('x', 12);
+        texts[li].setAttribute('y', 19 + li * 15);
+      });
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const labelNodesSmell = labels1smell.querySelectorAll('.event-label.smell');
+  labelNodesSmell.forEach((node) => {
+    const i = parseInt(node.getAttribute('data-idx'), 10);
+    const e = case1Smell[i];
+    if (e.idx <= idx1 + 0.5) {
+      node.setAttribute('opacity', '1');
+      const x = xAt(e.idx, N);
+      const y = yAtSmell(e.score);
+      const texts = node.querySelectorAll('text');
+      let maxW = 0;
+      texts.forEach(t => { maxW = Math.max(maxW, t.getComputedTextLength?.() ?? 120); });
+      const w = maxW + 22;
+      const h = (node._hasDesc && node._hasTip) ? 48 : 30;
+      let tx = x - w / 2;
+      let ty = y + 30;
+      if (e.idx === 0) { ty = y + 15; }
+      if (e.idx === 6) { tx = x + 20; }
+      tx = Math.max(PAD_L + 4, Math.min(PAD_L + plotW - w - 4, tx));
+      ty = Math.min(PAD_T + plotH - h - 4, ty);
+      node.setAttribute('transform', `translate(${tx.toFixed(2)}, ${ty.toFixed(2)})`);
+      const rect = node.querySelector('rect:first-child');
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', h);
+      node.querySelectorAll('rect')[1].setAttribute('height', h);
+      if (texts[0]) { texts[0].setAttribute('x', 12); texts[0].setAttribute('y', 19); }
+      if (texts[1]) { texts[1].setAttribute('x', 12); texts[1].setAttribute('y', 36); }
+    } else { node.setAttribute('opacity', '0'); }
+  });
+}
+
+/* ---------- 案例二绘制 ---------- */
+function drawCase2() {
+  const N = scenes2.length;
+  const visBac = samples2Bac.filter(s => s.idx <= idx2 + 0.01);
+  const visSmell = samples2Smell.filter(s => s.idx <= idx2 + 0.01);
+
+  if (visBac.length > 1) {
+    let d = '';
+    visBac.forEach((s, i) => {
+      const x = xAt(s.idx, N);
+      const y = yAtBac(s.v, Y_MAX_BAC_2);
+      d += (i === 0 ? `M${x.toFixed(2)} ${y.toFixed(2)}` : ` L${x.toFixed(2)} ${y.toFixed(2)}`);
+    });
+    line2bac.setAttribute('d', d);
+    const firstX = xAt(visBac[0].idx, N);
+    const lastX  = xAt(visBac[visBac.length-1].idx, N);
+    const baseY  = PAD_T + plotH;
+    area2.setAttribute('d', d + ` L${lastX.toFixed(2)} ${baseY} L${firstX.toFixed(2)} ${baseY} Z`);
+  } else { line2bac.setAttribute('d', ''); area2.setAttribute('d', ''); }
+
+  if (visSmell.length > 1) {
+    let d = '';
+    visSmell.forEach((s, i) => {
+      const x = xAt(s.idx, N);
+      const y = yAtSmell(s.v);
+      d += (i === 0 ? `M${x.toFixed(2)} ${y.toFixed(2)}` : ` L${x.toFixed(2)} ${y.toFixed(2)}`);
+    });
+    line2smell.setAttribute('d', d);
+  } else { line2smell.setAttribute('d', ''); }
+
+  const dotNodesBac = dots2bac.querySelectorAll('.dot.bac');
+  dotNodesBac.forEach((node, i) => {
+    const e = case2Bacteria[i];
+    if (e.idx <= idx2 + 0.5) {
+      node.setAttribute('opacity', '1');
+      node.setAttribute('transform', `translate(${xAt(e.idx, N).toFixed(2)}, ${yAtBac(e.v, Y_MAX_BAC_2).toFixed(2)})`);
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const dotNodesSmell = dots2smell.querySelectorAll('.dot.smell');
+  dotNodesSmell.forEach((node, i) => {
+    const e = case2Smell[i];
+    if (e.idx <= idx2 + 0.5) {
+      node.setAttribute('opacity', '1');
+      node.setAttribute('transform', `translate(${xAt(e.idx, N).toFixed(2)}, ${yAtSmell(e.score).toFixed(2)})`);
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const labelNodesBac = labels2bac.querySelectorAll('.event-label.bac');
+  labelNodesBac.forEach((node) => {
+    const i = parseInt(node.getAttribute('data-idx'), 10);
+    const e = case2Bacteria[i];
+    if (e.idx <= idx2 + 0.5) {
+      node.setAttribute('opacity', '1');
+      const x = xAt(e.idx, N);
+      const y = yAtBac(e.v, Y_MAX_BAC_2);
+      const lines = node._lines;
+      const texts = node.querySelectorAll('text');
+      let maxW = 0;
+      texts.forEach(t => { maxW = Math.max(maxW, t.getComputedTextLength?.() ?? 120); });
+      const w = maxW + 22;
+      const h = lines.length * 15 + 14;
+      let tx = x - w / 2;
+      let ty = y - h - 30;
+      if (e.idx === 2) { tx = x - w / 2; ty = y - h - 25; }
+      if (e.idx === 7) {
+        const xMid = (xAt(6, N) + xAt(7, N)) / 2;
+        tx = xMid - w / 2;
+        ty = y - h - 30;
+      }
+      tx = Math.max(PAD_L + 4, Math.min(PAD_L + plotW - w - 4, tx));
+      ty = Math.max(PAD_T + 4, ty);
+      node.setAttribute('transform', `translate(${tx.toFixed(2)}, ${ty.toFixed(2)})`);
+      const rect = node.querySelector('rect:first-child');
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', h);
+      node.querySelectorAll('rect')[1].setAttribute('height', h);
+      lines.forEach((ln, li) => {
+        texts[li].setAttribute('x', 12);
+        texts[li].setAttribute('y', 19 + li * 15);
+      });
+    } else { node.setAttribute('opacity', '0'); }
+  });
+
+  const labelNodesSmell = labels2smell.querySelectorAll('.event-label.smell');
+  labelNodesSmell.forEach((node) => {
+    const i = parseInt(node.getAttribute('data-idx'), 10);
+    const e = case2Smell[i];
+    if (e.idx <= idx2 + 0.5) {
+      node.setAttribute('opacity', '1');
+      const x = xAt(e.idx, N);
+      const y = yAtSmell(e.score);
+      const texts = node.querySelectorAll('text');
+      let maxW = 0;
+      texts.forEach(t => { maxW = Math.max(maxW, t.getComputedTextLength?.() ?? 120); });
+      const w = maxW + 22;
+      const h = (node._hasDesc && node._hasTip) ? 48 : 30;
+      let tx = x - w / 2;
+      let ty = y + 30;
+      if (e.idx === 0) { tx = x - w / 2; ty = yAtBac(340, Y_MAX_BAC_2) - h - 40; }
+      if (e.idx === 2) { tx = x - w / 2; ty = yAtBac(340, Y_MAX_BAC_2) - 25 - 34 - h - 12; }
+      if (e.idx === 4) { tx = x - w / 2; ty = y - h - 25; }
+      if (e.idx === 7) { tx = x - w - 140; ty = yAtSmell(2) - h - 20; }
+      tx = Math.max(PAD_L + 4, Math.min(PAD_L + plotW - w - 4, tx));
+      ty = Math.min(PAD_T + plotH - h - 4, ty);
+      node.setAttribute('transform', `translate(${tx.toFixed(2)}, ${ty.toFixed(2)})`);
+      const rect = node.querySelector('rect:first-child');
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', h);
+      node.querySelectorAll('rect')[1].setAttribute('height', h);
+      if (texts[0]) { texts[0].setAttribute('x', 12); texts[0].setAttribute('y', 19); }
+      if (texts[1]) { texts[1].setAttribute('x', 12); texts[1].setAttribute('y', 36); }
+    } else { node.setAttribute('opacity', '0'); }
+  });
+}
+
+drawCase1();
+drawCase2();
+
+  window.__vs = {
+    pause: function () { pauseCase1(); pauseCase2(); },
+    redraw: function () { drawCase1(); drawCase2(); }
+  };
+})();
+</script>
+
+<script>
 /* ================= 切换逻辑 ================= */
 (function () {
   const btns = document.querySelectorAll('.seg-btn');
   const panels = {
     '1': document.getElementById('panel-case1'),
-    '2': document.getElementById('panel-case2')
+    '2': document.getElementById('panel-case2'),
+    '3': document.getElementById('panel-vs')
+  };
+  const hooks = {
+    '1': function () { return window.__case1; },
+    '2': function () { return window.__case2; },
+    '3': function () { return window.__vs; }
   };
   btns.forEach(btn => btn.addEventListener('click', () => {
     if (btn.classList.contains('active')) return;
     btns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const target = btn.dataset.case;
-    panels['1'].classList.toggle('active', target === '1');
-    panels['2'].classList.toggle('active', target === '2');
-    if (target === '1') {
-      window.__case2 && window.__case2.pause();
-      requestAnimationFrame(() => window.__case1 && window.__case1.redraw());
-    } else {
-      window.__case1 && window.__case1.pause();
-      requestAnimationFrame(() => window.__case2 && window.__case2.redraw());
-    }
+    Object.keys(panels).forEach(k => {
+      panels[k].classList.toggle('active', k === target);
+      if (k !== target) { const h = hooks[k](); if (h) h.pause(); }
+    });
+    requestAnimationFrame(() => { const h = hooks[target](); if (h) h.redraw(); });
     window.scrollTo(0, 0);
   }));
 })();
